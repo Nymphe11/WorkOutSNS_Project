@@ -9,15 +9,15 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import 'react-native-gesture-handler';
+import {NavigationContainer} from '@react-navigation/native';
+import Router from './src/router';
 
 function App(): React.JSX.Element {
   return (
-    <SafeAreaView
-      style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <View>
-        <Text>App</Text>
-      </View>
-    </SafeAreaView>
+    <NavigationContainer>
+      <Router />
+    </NavigationContainer>
   );
 }
 
