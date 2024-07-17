@@ -14,7 +14,7 @@ import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import {RequestCameraPermission} from '../utils/RequestCameraPermission';
 import {Icon} from '@rneui/themed';
 
-const Add = ({navigation}) => {
+const AddProfileImg = ({navigation}) => {
   const [images, setImages] = useState();
   const [selectedPhoto, setSelectedPhoto] = useState();
   const [selectedIndex, setSelectedIndex] = useState();
@@ -46,9 +46,9 @@ const Add = ({navigation}) => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log('images:', images);
-  // }, [images]);
+  useEffect(() => {
+    console.log('images:', images);
+  }, [images]);
 
   const renderItem = ({item, index}) => {
     return (
@@ -106,9 +106,6 @@ const Add = ({navigation}) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('UploadFeed', {selectedPhoto: selectedPhoto})
-          }
           style={{
             backgroundColor: '#fff',
             paddingVertical: 4,
@@ -117,7 +114,7 @@ const Add = ({navigation}) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Text style={{fontSize: 16, color: '#0064ff'}}>다음</Text>
+          <Text style={{fontSize: 16, color: '#0064ff'}}>등록</Text>
         </TouchableOpacity>
       </View>
       <View style={{backgroundColor: '#000', flex: 0.5}}>
@@ -142,4 +139,4 @@ const Add = ({navigation}) => {
   );
 };
 
-export default Add;
+export default AddProfileImg;

@@ -103,54 +103,6 @@ const dummy_data = [
   },
 ];
 
-// const dummy_data = [
-//   {
-//     nickName: 'Bong',
-//     email: 'Bong@gmail.com',
-//     introduce: 'string',
-//     profileImagePath: 'https://avatar.iran.liara.run/public',
-//     followingCount: 0,
-//     followerCount: 0,
-//     feedCount: 0,
-//   },
-//   {
-//     nickName: 'Jeon',
-//     email: 'Jeon@gmail.com',
-//     introduce: 'string',
-//     profileImagePath: 'https://avatar.iran.liara.run/public',
-//     followingCount: 0,
-//     followerCount: 0,
-//     feedCount: 0,
-//   },
-//   {
-//     nickName: 'Park',
-//     email: 'Park@gmail.com',
-//     introduce: 'string',
-//     profileImagePath: 'https://avatar.iran.liara.run/public',
-//     followingCount: 0,
-//     followerCount: 0,
-//     feedCount: 0,
-//   },
-//   {
-//     nickName: 'Cha',
-//     email: 'Cha@gmail.com',
-//     introduce: 'string',
-//     profileImagePath: 'https://avatar.iran.liara.run/public',
-//     followingCount: 0,
-//     followerCount: 0,
-//     feedCount: 0,
-//   },
-//   {
-//     nickName: 'Baek',
-//     email: 'Baek@gmail.com',
-//     introduce: 'string',
-//     profileImagePath: 'https://avatar.iran.liara.run/public',
-//     followingCount: 0,
-//     followerCount: 0,
-//     feedCount: 0,
-//   },
-// ];
-
 const dummy_feed = [
   {
     id: 0,
@@ -290,7 +242,7 @@ const {width} = Dimensions.get('window');
 
 const Home = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const commentsRef = useRef();
+  const [feedInfo, setFeedInfo] = useState();
 
   const renderStory = ({item, index}) => {
     return (
@@ -319,6 +271,7 @@ const Home = () => {
   };
 
   const renderFeed = ({item, index}) => {
+    // console.log(item);
     return (
       <View style={{paddingVertical: 24}}>
         <View
@@ -377,7 +330,7 @@ const Home = () => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                commentsRef.current = item.replys;
+                setFeedInfo(item);
                 setIsVisible(!isVisible);
               }}>
               <Icon
@@ -458,7 +411,7 @@ const Home = () => {
         <CommentsModal
           isVisible={isVisible}
           setIsVisible={setIsVisible}
-          comments={commentsRef.current}
+          comments={feedInfo}
         />
       </View>
     </SafeAreaView>

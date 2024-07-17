@@ -14,11 +14,17 @@ import {
 import Modal from 'react-native-modal';
 import {Icon} from '@rneui/themed';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import {API} from '../apis';
 
 function getTimeAgo(createDate) {
   const now = new Date();
   const createdAt = new Date(createDate);
-  const diffInSeconds = Math.floor((now - createdAt) / 1000);
+
+  // 서버시간은 한국기준이고 now는 협정 세계시 기준
+  const koreaTimeDiff = 9 * 60 * 60 * 1000;
+  const nowKorea = new Date(now.getTime() + koreaTimeDiff);
+
+  const diffInSeconds = Math.floor((nowKorea - createdAt) / 1000);
 
   if (diffInSeconds < 60) {
     return '방금';
@@ -49,10 +55,6 @@ const CommentItem = ({item, index}) => {
         width: '100%',
         columnGap: 6,
       }}>
-      {/* <Image
-        source={{ uri: item.profileImg }}
-        style={{width: 32, height: 32, borderRadius: 16}}
-      /> */}
       <View style={{flex: 1, rowGap: 3}}>
         <View
           style={{flexDirection: 'row', alignItems: 'center', columnGap: 8}}>
@@ -74,13 +76,25 @@ const CommentItem = ({item, index}) => {
   );
 };
 
-const CommentsModal = ({isVisible, setIsVisible, comments}) => {
+const CommentsModal = ({isVisible, setIsVisible, comments, onCommentAdded}) => {
   const [textValue, setTextValue] = useState('');
   const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = useWindowDimensions();
 
   const renderItem = useCallback(({item, index}) => {
     return <CommentItem item={item} index={index} />;
   }, []);
+
+  const addReplyApi = async () => {
+    const requestBody = {reply: textValue};
+    const res = await API.post(`/feed/${comments.id}/reply`, requestBody);
+    console.log(res);
+  };
+
+  const handleAddReply = async () => {
+    await addReplyApi();
+    onCommentAdded();
+    setTextValue('');
+  };
 
   return (
     <Modal
@@ -144,7 +158,7 @@ const CommentsModal = ({isVisible, setIsVisible, comments}) => {
           </View>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={comments}
+            data={comments?.replys}
             renderItem={renderItem}
             keyExtractor={item => item.replyId}
             // ListEmptyComponent={}
@@ -199,6 +213,7 @@ const CommentsModal = ({isVisible, setIsVisible, comments}) => {
             />
           </View>
           <TouchableOpacity
+            onPress={() => handleAddReply()}
             style={{
               justifyContent: 'center',
               alignItems: 'center',

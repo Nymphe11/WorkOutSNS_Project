@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import {
   FlatList,
   Image,
@@ -9,581 +9,29 @@ import {
   View,
 } from 'react-native';
 import {API} from '../apis';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import {Icon} from '@rneui/themed';
 import LogoutModal from '../components/LogoutModal';
 
-function getRandomNumberFeed() {
-  return Math.floor(Math.random() * 300) + 1;
-}
-
-const dummy_myfeed = [
-  {
-    id: 0,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 1,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 2,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 3,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 4,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 5,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 6,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 7,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 8,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 9,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 10,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 11,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 12,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 13,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 14,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 15,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 16,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 17,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 18,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 19,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 20,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-  {
-    id: 21,
-    content: 'string',
-    nickname: 'string',
-    profileImagePath: 'string',
-    tags: ['string'],
-    images: [`https://picsum.photos/id/${getRandomNumberFeed()}/600/600`],
-    emotions: {
-      emotionCheck: 'GOOD',
-      total: 0,
-      good: 0,
-      funny: 0,
-      angry: 0,
-      surprise: 0,
-      sad: 0,
-    },
-    replys: [
-      {
-        replyId: 0,
-        nickname: 'string',
-        reply: 'string',
-        createDate: '2024-07-14T23:01:56.212Z',
-      },
-    ],
-  },
-];
-
-const MyPage = () => {
+const MyPage = ({route}) => {
   const navigation = useNavigation();
   const {width, height} = useWindowDimensions();
   const [data, setData] = useState();
+  const [myFeed, setMyFeed] = useState();
   const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
-    myPageApi();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      myPageApi();
+    }, []),
+  );
 
   const myPageApi = async () => {
     const res = await API.get('/accounts/info/mypage');
-    console.log(res.data.result.accountInfoResponse);
+    // console.log(res.data.result.accountInfoResponse);
+    // console.log(res.data.result.feedList);
     setData(res.data.result.accountInfoResponse);
+    setMyFeed(res.data.result.feedList);
   };
 
   function extractEmailUsername(email) {
@@ -596,12 +44,20 @@ const MyPage = () => {
     }
   }
 
+  const handleFeedPress = item => {
+    navigation.navigate('MyFeedDetail', {item});
+  };
+
   const renderMyFeed = ({item}) => {
-    console.log(item.images);
+    const BASE_URL = 'http://13.209.27.220:8080';
+    const imageUrl = item.images[0] ? `${BASE_URL}${item.images[0]}` : null;
+    // console.log(item.images);
     return (
-      <TouchableOpacity style={{borderWidth: 1, borderColor: '#fff'}}>
+      <TouchableOpacity
+        onPress={() => handleFeedPress(item)}
+        style={{borderWidth: 1, borderColor: '#fff'}}>
         <Image
-          source={{uri: item.images[0]}}
+          source={{uri: imageUrl}}
           resizeMode="cover"
           style={{width: width / 3 - 2, height: width / 3 - 2}}
         />
@@ -685,6 +141,9 @@ const MyPage = () => {
             <Text>게시물</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('FollowTab', {screen: 'Follower'})
+            }
             style={{justifyContent: 'center', alignItems: 'center'}}>
             <Text style={{fontSize: 20, fontWeight: '600'}}>
               {data?.followerCount}
@@ -692,6 +151,9 @@ const MyPage = () => {
             <Text>팔로워</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('FollowTab', {screen: 'Following'})
+            }
             style={{justifyContent: 'center', alignItems: 'center'}}>
             <Text style={{fontSize: 20, fontWeight: '600'}}>
               {data?.followingCount}
@@ -735,7 +197,7 @@ const MyPage = () => {
         ) : (
           <View>
             <FlatList
-              data={dummy_myfeed}
+              data={myFeed}
               renderItem={renderMyFeed}
               keyExtractor={item => item.id}
               numColumns={3}

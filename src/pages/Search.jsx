@@ -10,91 +10,38 @@ import {
   StyleSheet,
   FlatList,
   useWindowDimensions,
+  RefreshControl,
 } from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import {API} from '../apis';
-// import FastImage from 'react-native-fast-image';
-
-// function getRandomNumberFeed() {
-//   return Math.floor(Math.random() * 300) + 1;
-// }
-
-// const dummy_search = [
-//   {
-//     id: 1,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: true,
-//   },
-//   {
-//     id: 2,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: false,
-//   },
-//   {
-//     id: 3,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: true,
-//   },
-//   {
-//     id: 4,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: false,
-//   },
-//   {
-//     id: 5,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: true,
-//   },
-//   {
-//     id: 6,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: false,
-//   },
-//   {
-//     id: 7,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: false,
-//   },
-//   {
-//     id: 8,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: true,
-//   },
-//   {
-//     id: 9,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: true,
-//   },
-//   {
-//     id: 10,
-//     img: `https://picsum.photos/id/${getRandomNumberFeed()}/130/130`,
-//     isMulti: true,
-//   },
-// ];
+import FastImage from 'react-native-fast-image';
 
 const Search = ({navigation}) => {
   const [keyword, setKeyword] = useState('');
   const [content, setContent] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const {width} = useWindowDimensions();
   const imageSize = width / 3;
-
-  // const onTest = () => {
-  //   searchAllApi();
-  // };
 
   useEffect(() => {
     searchAllApi();
   }, []);
 
-  useEffect(() => {
-    console.log(content);
-  }, [content]);
+  // useEffect(() => {
+  //   console.log(content);
+  // }, [content]);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    searchAllApi().then(() => setRefreshing(false));
+  }, []);
 
   const searchAllApi = async () => {
     try {
       const res = await API.get(
-        '/feed/search?searchTag=all&page=0&pageSize=18',
+        '/feed/search?searchTag=all&page=0&pageSize=100',
       );
+      // console.log(res);
       if (res.data && res.data.result && res.data.result.content) {
         setContent(res.data.result.content);
       } else {
@@ -105,24 +52,49 @@ const Search = ({navigation}) => {
     }
   };
 
-  const renderItem = ({item}) => {
-    if (!item || !item.images) {
-      console.warn('Invalid item data:', item);
-      return null;
-    }
-    const baseURL = 'http://13.209.27.220:8080';
-    const imageUrl = `${baseURL}${item.images}`;
+  const handleFeedPress = item => {
+    navigation.navigate('SearchFeedDetail', {item});
+  };
 
-    // console.log(imageUrl);
+  const renderItem = ({item}) => {
+    const baseURL = 'http://13.209.27.220:8080';
+    const imageUrl = `${baseURL}${item.images[0]}`;
+
     return (
-      <TouchableOpacity style={{borderWidth: 1, borderColor: '#fff'}}>
-        <Image
-          source={{uri: imageUrl}}
-          style={{width: imageSize - 2, height: imageSize - 2}}
-          resizeMode="cover"
-          onLoad={() => console.log('Image loaded successfully')}
-          onError={e => console.log('Image load error:', e.nativeEvent.error)}
-        />
+      <TouchableOpacity
+        onPress={() => handleFeedPress(item)}
+        style={{borderWidth: 1, borderColor: '#fff'}}>
+        <View>
+          <FastImage
+            source={{
+              uri: imageUrl,
+              priority: FastImage.priority.low,
+            }}
+            style={{width: imageSize - 2, height: imageSize - 2}}
+          />
+        </View>
+        {item.images.length > 1 && (
+          <View
+            style={{
+              position: 'absolute',
+              top: 10,
+              right: 10,
+              elevation: 5,
+              backgroundColor: 'rgba(255, 255, 255, 0.01)',
+              shadowColor: '#000',
+              shadowOffset: {width: 1, height: 1},
+              shadowOpacity: 0.7,
+              shadowRadius: 3.84,
+              zIndex: 10,
+            }}>
+            <Icon
+              name="checkbox-multiple-blank"
+              type="material-community"
+              size={30}
+              color="#fff"
+            />
+          </View>
+        )}
       </TouchableOpacity>
     );
   };
@@ -148,9 +120,6 @@ const Search = ({navigation}) => {
             </TouchableOpacity>
           </View>
 
-          {/* <TouchableOpacity onPress={onTest} style={{backgroundColor: 'black'}}>
-            <Text>테스트</Text>
-          </TouchableOpacity> */}
           <FlatList
             data={content}
             renderItem={renderItem}
@@ -161,6 +130,9 @@ const Search = ({navigation}) => {
             initialNumToRender={1}
             maxToRenderPerBatch={1}
             windowSize={3}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
           />
         </View>
       </SafeAreaView>

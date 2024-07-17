@@ -13,7 +13,7 @@ const BasicHeader = ({title}) => {
   const navigation = useNavigation();
   return (
     <View style={styles.headerWrapper}>
-      <TouchableOpacity onPress={() => NavigationContainer.goBack()}>
+      <TouchableOpacity onPress={() => navigation.goBack()}>
         <Icon
           name="left"
           type="antdesign"
